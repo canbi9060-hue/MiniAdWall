@@ -1,5 +1,15 @@
 // 文件上传工具函数
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+const getApiBaseUrl = () => {
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  if (import.meta.env.PROD) {
+    return '/api';
+  }
+  return 'http://localhost:3001/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 export const uploadAPI = {
   // 上传单个视频文件
@@ -20,10 +30,17 @@ export const uploadAPI = {
       }
 
       // 返回完整的URL（包含服务器地址）
-      const baseUrl = API_BASE_URL.replace('/api', '') || 'http://localhost:3001';
+      // 生产环境使用相对路径，开发环境使用完整URL
+      let baseUrl = API_BASE_URL.replace('/api', '');
+      if (import.meta.env.PROD) {
+        // 生产环境：上传的文件URL已经是相对路径，直接使用
+        baseUrl = '';
+      } else {
+        baseUrl = baseUrl || 'http://localhost:3001';
+      }
       return {
         ...data.data,
-        fullUrl: `${baseUrl}${data.data.url}`
+        fullUrl: baseUrl ? `${baseUrl}${data.data.url}` : data.data.url
       };
     } catch (error) {
       console.error('视频上传错误:', error);
@@ -51,10 +68,15 @@ export const uploadAPI = {
       }
 
       // 返回完整的URL（包含服务器地址）
-      const baseUrl = API_BASE_URL.replace('/api', '') || 'http://localhost:3001';
+      let baseUrl = API_BASE_URL.replace('/api', '');
+      if (import.meta.env.PROD) {
+        baseUrl = '';
+      } else {
+        baseUrl = baseUrl || 'http://localhost:3001';
+      }
       return data.data.map(file => ({
         ...file,
-        fullUrl: `${baseUrl}${file.url}`
+        fullUrl: baseUrl ? `${baseUrl}${file.url}` : file.url
       }));
     } catch (error) {
       console.error('视频上传错误:', error);

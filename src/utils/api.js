@@ -1,5 +1,20 @@
 // API 配置
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+// 生产环境使用相对路径，通过 Vercel rewrites 代理到后端
+// 开发环境使用 localhost
+const getApiBaseUrl = () => {
+  // 如果设置了环境变量，优先使用
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  // 生产环境（Vercel）使用相对路径
+  if (import.meta.env.PROD) {
+    return '/api';
+  }
+  // 开发环境使用 localhost
+  return 'http://localhost:3001/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 // 通用请求函数
 async function request(url, options = {}) {
