@@ -8,7 +8,7 @@ const getApiBaseUrl = () => {
   }
   // 生产环境使用后端服务地址
   if (import.meta.env.PROD) {
-    return 'https://server-fr8ahc1rq-bc-82a48503.vercel.app/api';
+    return 'https://server-l3dootsx5-bc-82a48503.vercel.app/api';
   }
   // 开发环境使用 localhost
   return 'http://localhost:3001/api';
