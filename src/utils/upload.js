@@ -4,7 +4,7 @@ const getApiBaseUrl = () => {
     return import.meta.env.VITE_API_BASE_URL;
   }
   if (import.meta.env.PROD) {
-    return 'https://server-l3dootsx5-bc-82a48503.vercel.app/api';
+    return 'https://server-m0xj7vgud-bc-82a48503.vercel.app/api';
   }
   return 'http://localhost:3001/api';
 };
