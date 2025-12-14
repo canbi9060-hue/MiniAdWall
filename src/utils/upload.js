@@ -39,7 +39,14 @@ export const uploadAPI = {
       }
 
       // 返回完整的URL（包含服务器地址）
-      const baseUrl = API_BASE_URL.replace('/api', '') || 'http://localhost:3001';
+      const isProd = typeof window !== 'undefined' && (
+        window.location.hostname === 'miniad.top' ||
+        window.location.hostname === 'www.miniad.top' ||
+        window.location.hostname.includes('vercel.app') ||
+        import.meta.env.PROD
+      );
+      const baseUrl = API_BASE_URL.replace('/api', '') || 
+        (isProd ? 'https://server-kutoe9ljq-bc-82a48503.vercel.app' : 'http://localhost:3001');
       return {
         ...data.data,
         fullUrl: `${baseUrl}${data.data.url}`
