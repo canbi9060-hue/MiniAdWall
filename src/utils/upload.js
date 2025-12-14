@@ -3,7 +3,16 @@ const getApiBaseUrl = () => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
-  if (import.meta.env.PROD) {
+  
+  // 判断是否为生产环境：检查当前域名
+  const isProduction = typeof window !== 'undefined' && (
+    window.location.hostname === 'miniad.top' ||
+    window.location.hostname === 'www.miniad.top' ||
+    window.location.hostname.includes('vercel.app') ||
+    import.meta.env.PROD
+  );
+  
+  if (isProduction) {
     return 'https://server-kutoe9ljq-bc-82a48503.vercel.app/api';
   }
   return 'http://localhost:3001/api';
@@ -61,7 +70,14 @@ export const uploadAPI = {
       }
 
       // 返回完整的URL（包含服务器地址）
-      const baseUrl = API_BASE_URL.replace('/api', '') || 'http://localhost:3001';
+      const isProduction = typeof window !== 'undefined' && (
+        window.location.hostname === 'miniad.top' ||
+        window.location.hostname === 'www.miniad.top' ||
+        window.location.hostname.includes('vercel.app') ||
+        import.meta.env.PROD
+      );
+      const baseUrl = API_BASE_URL.replace('/api', '') || 
+        (isProduction ? 'https://server-kutoe9ljq-bc-82a48503.vercel.app' : 'http://localhost:3001');
       return data.data.map(file => ({
         ...file,
         fullUrl: `${baseUrl}${file.url}`

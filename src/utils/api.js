@@ -6,8 +6,17 @@ const getApiBaseUrl = () => {
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
+  
+  // 判断是否为生产环境：检查当前域名
+  const isProduction = typeof window !== 'undefined' && (
+    window.location.hostname === 'miniad.top' ||
+    window.location.hostname === 'www.miniad.top' ||
+    window.location.hostname.includes('vercel.app') ||
+    import.meta.env.PROD
+  );
+  
   // 生产环境使用后端服务地址
-  if (import.meta.env.PROD) {
+  if (isProduction) {
     return 'https://server-kutoe9ljq-bc-82a48503.vercel.app/api';
   }
   // 开发环境使用 localhost
