@@ -1,20 +1,18 @@
 // 文件上传工具函数
+// 自动检测环境：生产环境使用环境变量，开发环境使用 localhost
 const getApiBaseUrl = () => {
+  // 如果设置了环境变量，优先使用
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
   
-  // 判断是否为生产环境：检查当前域名
-  const isProduction = typeof window !== 'undefined' && (
-    window.location.hostname === 'miniad.top' ||
-    window.location.hostname === 'www.miniad.top' ||
-    window.location.hostname.includes('vercel.app') ||
-    import.meta.env.PROD
-  );
-  
-  if (isProduction) {
-    return 'https://server-kutoe9ljq-bc-82a48503.vercel.app/api';
+  // 生产环境（部署在 Vercel 等平台）
+  if (import.meta.env.MODE === 'production' || window.location.hostname !== 'localhost') {
+    // 默认使用后端服务地址（需要在 Vercel 环境变量中配置）
+    return 'https://server-fr8ahc1rq-bc-82a48503.vercel.app/api';
   }
+  
+  // 开发环境
   return 'http://localhost:3001/api';
 };
 
@@ -39,14 +37,7 @@ export const uploadAPI = {
       }
 
       // 返回完整的URL（包含服务器地址）
-      const isProd = typeof window !== 'undefined' && (
-        window.location.hostname === 'miniad.top' ||
-        window.location.hostname === 'www.miniad.top' ||
-        window.location.hostname.includes('vercel.app') ||
-        import.meta.env.PROD
-      );
-      const baseUrl = API_BASE_URL.replace('/api', '') || 
-        (isProd ? 'https://server-kutoe9ljq-bc-82a48503.vercel.app' : 'http://localhost:3001');
+      const baseUrl = API_BASE_URL.replace('/api', '') || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://server-fr8ahc1rq-bc-82a48503.vercel.app');
       return {
         ...data.data,
         fullUrl: `${baseUrl}${data.data.url}`
@@ -77,14 +68,7 @@ export const uploadAPI = {
       }
 
       // 返回完整的URL（包含服务器地址）
-      const isProduction = typeof window !== 'undefined' && (
-        window.location.hostname === 'miniad.top' ||
-        window.location.hostname === 'www.miniad.top' ||
-        window.location.hostname.includes('vercel.app') ||
-        import.meta.env.PROD
-      );
-      const baseUrl = API_BASE_URL.replace('/api', '') || 
-        (isProduction ? 'https://server-kutoe9ljq-bc-82a48503.vercel.app' : 'http://localhost:3001');
+      const baseUrl = API_BASE_URL.replace('/api', '') || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://server-fr8ahc1rq-bc-82a48503.vercel.app');
       return data.data.map(file => ({
         ...file,
         fullUrl: `${baseUrl}${file.url}`

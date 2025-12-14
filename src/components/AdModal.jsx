@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { adAPI } from '../utils/api';
-import { showMessage } from '../utils/helpers';
 import DynamicForm from './DynamicForm';
 
 const AdModal = ({ 
@@ -27,9 +26,6 @@ const AdModal = ({
             setFormConfig(config);
         } catch (error) {
             console.error('加载表单配置失败:', error);
-            showMessage('加载表单配置失败: ' + (error.message || '请检查网络连接'), 'error');
-            // 设置为空数组，让用户知道配置加载失败
-            setFormConfig([]);
         } finally {
             setLoading(false);
         }

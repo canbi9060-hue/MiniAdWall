@@ -12,37 +12,12 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS 配置 - 允许所有来源（生产环境）
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://miniad.top',
-  'https://www.miniad.top',
-  // 允许所有 Vercel 域名
-  /https:\/\/.*\.vercel\.app$/,
-  /https:\/\/.*\.vercel\.app\/.*$/
-];
-
+// 中间件
+// CORS 配置：允许所有来源（生产环境建议配置具体域名）
 app.use(cors({
-  origin: function (origin, callback) {
-    // 允许没有 origin 的请求（如移动应用、Postman 等）
-    if (!origin) return callback(null, true);
-    
-    // 检查是否在允许列表中
-    const isAllowed = allowedOrigins.some(pattern => {
-      if (typeof pattern === 'string') {
-        return pattern === origin;
-      }
-      return pattern.test(origin);
-    });
-    
-    if (isAllowed) {
-      callback(null, true);
-    } else {
-      // 生产环境允许所有来源（临时方案，确保可以访问）
-      callback(null, true);
-    }
-  },
-  credentials: true
+  origin: '*', // 允许所有来源，生产环境可以配置为 ['https://www.miniad.top', 'https://miniad.top']
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

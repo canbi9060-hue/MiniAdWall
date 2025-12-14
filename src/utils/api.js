@@ -1,25 +1,19 @@
 // API 配置
-// 生产环境使用后端服务的完整 URL
-// 开发环境使用 localhost
+// 自动检测环境：生产环境使用环境变量，开发环境使用 localhost
 const getApiBaseUrl = () => {
   // 如果设置了环境变量，优先使用
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
   
-  // 判断是否为生产环境：检查当前域名
-  const isProduction = typeof window !== 'undefined' && (
-    window.location.hostname === 'miniad.top' ||
-    window.location.hostname === 'www.miniad.top' ||
-    window.location.hostname.includes('vercel.app') ||
-    import.meta.env.PROD
-  );
-  
-  // 生产环境使用后端服务地址
-  if (isProduction) {
-    return 'https://server-kutoe9ljq-bc-82a48503.vercel.app/api';
+  // 生产环境（部署在 Vercel 等平台）
+  if (import.meta.env.MODE === 'production' || window.location.hostname !== 'localhost') {
+    // 默认使用后端服务地址（需要在 Vercel 环境变量中配置）
+    // 如果后端也部署在 Vercel，使用相对路径或配置的地址
+    return 'https://server-fr8ahc1rq-bc-82a48503.vercel.app/api';
   }
-  // 开发环境使用 localhost
+  
+  // 开发环境
   return 'http://localhost:3001/api';
 };
 
@@ -41,28 +35,15 @@ async function request(url, options = {}) {
 
   try {
     const response = await fetch(`${API_BASE_URL}${url}`, config);
-    
-    // 检查响应是否成功
-    if (!response.ok) {
-      // 尝试解析错误信息
-      let errorMessage = '请求失败';
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.message || errorMessage;
-      } catch {
-        errorMessage = `请求失败: ${response.status} ${response.statusText}`;
-      }
-      throw new Error(errorMessage);
-    }
-    
     const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || '请求失败');
+    }
+
     return data;
   } catch (error) {
     console.error('API请求错误:', error);
-    // 如果是网络错误，提供更友好的错误信息
-    if (error.name === 'TypeError' && error.message.includes('fetch')) {
-      throw new Error('无法连接到服务器，请检查网络连接或稍后重试');
-    }
     throw error;
   }
 }
