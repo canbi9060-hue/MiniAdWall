@@ -4,7 +4,7 @@ const getApiBaseUrl = () => {
     return import.meta.env.VITE_API_BASE_URL;
   }
   if (import.meta.env.PROD) {
-    return '/api';
+    return 'https://server-fr8ahc1rq-bc-82a48503.vercel.app/api';
   }
   return 'http://localhost:3001/api';
 };
@@ -30,17 +30,10 @@ export const uploadAPI = {
       }
 
       // 返回完整的URL（包含服务器地址）
-      // 生产环境使用相对路径，开发环境使用完整URL
-      let baseUrl = API_BASE_URL.replace('/api', '');
-      if (import.meta.env.PROD) {
-        // 生产环境：上传的文件URL已经是相对路径，直接使用
-        baseUrl = '';
-      } else {
-        baseUrl = baseUrl || 'http://localhost:3001';
-      }
+      const baseUrl = API_BASE_URL.replace('/api', '') || 'http://localhost:3001';
       return {
         ...data.data,
-        fullUrl: baseUrl ? `${baseUrl}${data.data.url}` : data.data.url
+        fullUrl: `${baseUrl}${data.data.url}`
       };
     } catch (error) {
       console.error('视频上传错误:', error);
@@ -68,15 +61,10 @@ export const uploadAPI = {
       }
 
       // 返回完整的URL（包含服务器地址）
-      let baseUrl = API_BASE_URL.replace('/api', '');
-      if (import.meta.env.PROD) {
-        baseUrl = '';
-      } else {
-        baseUrl = baseUrl || 'http://localhost:3001';
-      }
+      const baseUrl = API_BASE_URL.replace('/api', '') || 'http://localhost:3001';
       return data.data.map(file => ({
         ...file,
-        fullUrl: baseUrl ? `${baseUrl}${file.url}` : file.url
+        fullUrl: `${baseUrl}${file.url}`
       }));
     } catch (error) {
       console.error('视频上传错误:', error);

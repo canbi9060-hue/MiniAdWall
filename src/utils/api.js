@@ -1,14 +1,14 @@
 // API 配置
-// 生产环境使用相对路径，通过 Vercel rewrites 代理到后端
+// 生产环境使用后端服务的完整 URL
 // 开发环境使用 localhost
 const getApiBaseUrl = () => {
   // 如果设置了环境变量，优先使用
   if (import.meta.env.VITE_API_BASE_URL) {
     return import.meta.env.VITE_API_BASE_URL;
   }
-  // 生产环境（Vercel）使用相对路径
+  // 生产环境使用后端服务地址
   if (import.meta.env.PROD) {
-    return '/api';
+    return 'https://server-fr8ahc1rq-bc-82a48503.vercel.app/api';
   }
   // 开发环境使用 localhost
   return 'http://localhost:3001/api';
