@@ -13,7 +13,16 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // 中间件
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'https://miniad.top',
+    'https://www.miniad.top',
+    'https://miniad.vercel.app',
+    /\.vercel\.app$/
+  ],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
