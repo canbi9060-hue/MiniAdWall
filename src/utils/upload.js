@@ -8,8 +8,9 @@ const getApiBaseUrl = () => {
   
   // 生产环境（部署在 Vercel 等平台）
   if (import.meta.env.MODE === 'production' || window.location.hostname !== 'localhost') {
-    // 默认使用后端服务地址（需要在 Vercel 环境变量中配置）
-    return 'https://server-fr8ahc1rq-bc-82a48503.vercel.app/api';
+    // 默认使用后端服务地址（需要在 Vercel 环境变量中配置 VITE_API_BASE_URL）
+    // 建议在 Vercel 项目设置中配置环境变量：VITE_API_BASE_URL=https://server-7uzottyd2-bc-82a48503.vercel.app/api
+    return 'https://server-7uzottyd2-bc-82a48503.vercel.app/api';
   }
   
   // 开发环境
@@ -37,7 +38,7 @@ export const uploadAPI = {
       }
 
       // 返回完整的URL（包含服务器地址）
-      const baseUrl = API_BASE_URL.replace('/api', '') || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://server-fr8ahc1rq-bc-82a48503.vercel.app');
+      const baseUrl = API_BASE_URL.replace('/api', '') || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://server-7uzottyd2-bc-82a48503.vercel.app');
       return {
         ...data.data,
         fullUrl: `${baseUrl}${data.data.url}`
@@ -68,7 +69,7 @@ export const uploadAPI = {
       }
 
       // 返回完整的URL（包含服务器地址）
-      const baseUrl = API_BASE_URL.replace('/api', '') || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://server-fr8ahc1rq-bc-82a48503.vercel.app');
+      const baseUrl = API_BASE_URL.replace('/api', '') || (window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'https://server-7uzottyd2-bc-82a48503.vercel.app');
       return data.data.map(file => ({
         ...file,
         fullUrl: `${baseUrl}${file.url}`
