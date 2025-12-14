@@ -1,7 +1,7 @@
 import React from 'react';
 import AdCard from './AdCard';
 
-const AdList = ({ ads, onCardClick, onEdit, onCopy, onDelete }) => {
+const AdList = React.memo(({ ads, onCardClick, onEdit, onCopy, onDelete }) => {
     if (ads.length === 0) {
         return (
             <p style={{ textAlign: 'center', color: '#999', padding: '40px' }}>
@@ -25,7 +25,8 @@ const AdList = ({ ads, onCardClick, onEdit, onCopy, onDelete }) => {
             ))}
         </div>
     );
-};
+});
 
+AdList.displayName = 'AdList';
 export default AdList;
 
