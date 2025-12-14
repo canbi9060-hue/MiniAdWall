@@ -27,6 +27,7 @@ const getDefaultAds = () => {
       landingPage: 'https://www.douyin.com',
       pricing: 10.00,
       clicked: 2,
+      videos: ['https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'],
       createdAt: new Date().toISOString()
     },
     {
@@ -37,6 +38,7 @@ const getDefaultAds = () => {
       landingPage: 'https://www.ixigua.com',
       pricing: 5.00,
       clicked: 2,
+      videos: ['https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4'],
       createdAt: new Date().toISOString()
     },
     {
@@ -47,6 +49,7 @@ const getDefaultAds = () => {
       landingPage: 'https://www.oceanengine.com',
       pricing: 5.00,
       clicked: 1,
+      videos: ['https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4'],
       createdAt: new Date().toISOString()
     },
     {
@@ -57,6 +60,7 @@ const getDefaultAds = () => {
       landingPage: 'https://www.dongchedi.com',
       pricing: 6.00,
       clicked: 0,
+      videos: ['https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4'],
       createdAt: new Date().toISOString()
     },
     {
@@ -67,6 +71,7 @@ const getDefaultAds = () => {
       landingPage: 'https://www.toutiao.com',
       pricing: 4.00,
       clicked: 1,
+      videos: ['https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4'],
       createdAt: new Date().toISOString()
     },
     {
@@ -77,6 +82,7 @@ const getDefaultAds = () => {
       landingPage: 'https://www.feishu.cn',
       pricing: 3.00,
       clicked: 0,
+      videos: ['https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4'],
       createdAt: new Date().toISOString()
     }
   ];

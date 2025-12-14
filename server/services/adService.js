@@ -39,6 +39,7 @@ export class AdService {
       content: adData.content,
       landingPage: adData.landingPage,
       pricing: adData.pricing,
+      videos: adData.videos || [],
       clicked: 0,
       createdAt: new Date().toISOString()
     };
@@ -60,6 +61,7 @@ export class AdService {
       content: adData.content,
       landingPage: adData.landingPage,
       pricing: adData.pricing,
+      videos: adData.videos || [],
       updatedAt: new Date().toISOString()
     };
 

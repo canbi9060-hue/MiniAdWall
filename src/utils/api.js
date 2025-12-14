@@ -71,5 +71,11 @@ export const adAPI = {
     });
     return response.data;
   },
+
+  // 获取表单配置
+  async getFormConfig() {
+    const response = await request('/form-config');
+    return response.data;
+  },
 };
 

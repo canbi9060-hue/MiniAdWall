@@ -10,24 +10,31 @@
 MiniAdWall/
 ├── server/                  # 后端服务
 │   ├── routes/             # 路由层
-│   │   └── ads.js          # 广告相关路由
+│   │   ├── ads.js          # 广告相关路由
+│   │   ├── upload.js       # 文件上传路由
+│   │   └── formConfig.js   # 表单配置路由
 │   ├── services/           # 业务逻辑层
 │   │   └── adService.js     # 广告服务
 │   ├── repositories/       # 数据访问层
 │   │   └── adRepository.js # 广告数据仓库
+│   ├── utils/              # 工具模块
+│   │   └── validation.js   # 数据验证工具
 │   ├── data/               # 数据存储目录（自动创建）
+│   ├── uploads/            # 上传文件存储目录（自动创建）
 │   ├── index.js            # 服务器入口
 │   └── package.json        # 后端依赖配置
 ├── src/
 │   ├── components/          # React 组件
-│   │   ├── Header.jsx       # 头部组件
-│   │   ├── AdCard.jsx       # 广告卡片组件
-│   │   ├── AdList.jsx       # 广告列表组件
-│   │   ├── AdModal.jsx      # 广告弹窗组件
-│   │   └── DeleteModal.jsx  # 删除确认弹窗组件
+│   │   ├── Navbar.jsx      # 导航栏组件
+│   │   ├── AdCard.jsx      # 广告卡片组件
+│   │   ├── AdList.jsx      # 广告列表组件
+│   │   ├── AdModal.jsx     # 广告弹窗组件
+│   │   ├── DynamicForm.jsx # 动态表单组件
+│   │   ├── DeleteModal.jsx # 删除确认弹窗组件
+│   │   └── VideoModal.jsx  # 视频播放弹窗组件
 │   ├── utils/               # 工具模块
-│   │   ├── api.js           # API 服务层（新增）
-│   │   ├── adManager.js     # 广告数据管理（已废弃，保留兼容）
+│   │   ├── api.js           # API 服务层
+│   │   ├── upload.js        # 文件上传工具
 │   │   ├── helpers.js       # 辅助函数
 │   │   └── formSerialize.js # 表单序列化工具
 │   ├── App.jsx              # 主应用组件
@@ -49,14 +56,19 @@ MiniAdWall/
 - ✅ React 18 + Vite 构建
 - ✅ 模块化组件设计
 - ✅ 响应式布局（固定宽度，支持滚动）
+- ✅ 动态表单配置（从后端读取表单配置）
+- ✅ 视频上传和播放功能
 - ✅ 表单验证和数据管理
 - ✅ 热度排行前三显示火焰图标
+- ✅ 多视频支持（顺序播放）
 
 ### 后端
 - ✅ Node.js + Express 框架
 - ✅ RESTful API 设计
 - ✅ 竞价排名算法
 - ✅ 数据持久化（JSON 文件存储）
+- ✅ 文件上传功能（multer）
+- ✅ 表单配置接口
 - ✅ CORS 跨域支持
 
 ### API 接口
@@ -65,6 +77,8 @@ MiniAdWall/
 - ✅ 删除广告接口
 - ✅ 查询广告列表接口（支持多种排序）
 - ✅ 点击广告次数+1接口
+- ✅ 视频文件上传接口
+- ✅ 表单配置接口
 
 ## 快速开始
 
@@ -138,6 +152,7 @@ npm run preview
 ### 后端
 - **Node.js** - 运行环境
 - **Express** - Web 框架
+- **multer** - 文件上传中间件
 - **JSON 文件存储** - 数据持久化
 
 ## API 文档
@@ -156,7 +171,13 @@ npm run preview
 广告列表组件，负责渲染广告卡片列表。
 
 ### AdModal
-广告弹窗组件，支持创建、编辑、复制三种模式。
+广告弹窗组件，支持创建、编辑、复制三种模式。从后端获取表单配置并动态渲染表单项。
+
+### DynamicForm
+动态表单组件，根据后端配置自动渲染表单项，支持 Input、Textarea、VideoUpload 等组件类型。
+
+### VideoModal
+视频播放弹窗组件，支持多视频顺序播放，播放完成后自动跳转到落地页。
 
 ### DeleteModal
 删除确认弹窗组件。

@@ -5,6 +5,7 @@ import Navbar from './components/Navbar';
 import AdList from './components/AdList';
 import AdModal from './components/AdModal';
 import DeleteModal from './components/DeleteModal';
+import VideoModal from './components/VideoModal';
 import './App.css';
 
 function App() {
@@ -12,9 +13,11 @@ function App() {
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
     const [modalMode, setModalMode] = useState('create'); // create, edit, copy
     const [currentAd, setCurrentAd] = useState(null);
     const [deleteAdId, setDeleteAdId] = useState(null);
+    const [videoAd, setVideoAd] = useState(null);
     const [searchKeyword, setSearchKeyword] = useState('');
     const [sortBy, setSortBy] = useState('ranking');
 
@@ -95,31 +98,62 @@ function App() {
         return map;
     }, [ads]);
 
-    // 处理广告卡片点击（优化：只更新单个广告，不重新加载整个列表）
-    const handleAdClick = useCallback(async (adId) => {
-        const ad = adMap.get(adId);
-        if (!ad?.landingPage) return;
-
-        // 先打开新窗口
-        const newWindow = window.open(ad.landingPage, '_blank');
+    // 处理视频播放完成后的跳转
+    const handleVideoEnd = useCallback(async (ad) => {
+        setIsVideoModalOpen(false);
         
-        // 乐观更新：立即更新UI，然后同步后端
-        setAds(prevAds => prevAds.map(a => 
-            a.id === adId ? { ...a, clicked: (a.clicked || 0) + 1 } : a
-        ));
-
-        // 异步更新后端
+        // 跳转到落地页
+        if (ad?.landingPage) {
+            window.open(ad.landingPage, '_blank');
+        }
+        
+        // 更新点击数
         try {
-            await adAPI.incrementClick(adId);
+            await adAPI.incrementClick(ad.id);
+            setAds(prevAds => prevAds.map(a => 
+                a.id === ad.id ? { ...a, clicked: (a.clicked || 0) + 1 } : a
+            ));
         } catch (error) {
             console.error('更新点击数失败:', error);
-            // 回滚乐观更新
-            setAds(prevAds => prevAds.map(a => 
-                a.id === adId ? { ...a, clicked: Math.max(0, (a.clicked || 0) - 1) } : a
-            ));
             showMessage('记录点击失败', 'error');
         }
-    }, [adMap]);
+    }, []);
+
+    // 处理广告卡片点击（支持视频播放）
+    const handleAdClick = useCallback((adId) => {
+        // 从最新的ads中获取广告数据，确保使用最新数据
+        const ad = ads.find(a => a.id === adId);
+        if (!ad) return;
+
+        // 如果有视频，先播放视频
+        if (ad.videos && Array.isArray(ad.videos) && ad.videos.length > 0 && ad.videos.some(v => v)) {
+            // 使用最新的广告数据，创建新对象避免引用问题
+            setVideoAd({ ...ad });
+            setIsVideoModalOpen(true);
+        } else if (ad.landingPage) {
+            // 没有视频，直接跳转落地页
+            const newWindow = window.open(ad.landingPage, '_blank');
+            
+            // 乐观更新：立即更新UI，然后同步后端
+            setAds(prevAds => prevAds.map(a => 
+                a.id === adId ? { ...a, clicked: (a.clicked || 0) + 1 } : a
+            ));
+
+            // 异步更新后端
+            (async () => {
+                try {
+                    await adAPI.incrementClick(adId);
+                } catch (error) {
+                    console.error('更新点击数失败:', error);
+                    // 回滚乐观更新
+                    setAds(prevAds => prevAds.map(a => 
+                        a.id === adId ? { ...a, clicked: Math.max(0, (a.clicked || 0) - 1) } : a
+                    ));
+                    showMessage('记录点击失败', 'error');
+                }
+            })();
+        }
+    }, [ads]);
 
     // 打开创建广告弹窗
     const handleAddClick = () => {
@@ -153,42 +187,33 @@ function App() {
         setIsDeleteModalOpen(true);
     };
 
-    // 处理表单提交（优化：成功后直接更新列表，不重新请求）
+    // 处理表单提交（提交后端后重新获取最新数据）
     const handleFormSubmit = useCallback(async (formData) => {
         try {
-            let newAd;
             if (modalMode === 'create' || modalMode === 'copy') {
-                newAd = await adAPI.createAd(formData);
+                await adAPI.createAd(formData);
                 showMessage('广告创建成功');
                 setIsModalOpen(false);
-                // 直接添加到列表，保持排序
-                setAds(prevAds => {
-                    const updated = [...prevAds, newAd];
-                    // 根据当前排序方式重新排序
-                    if (sortBy === 'ranking') {
-                        return updated.sort((a, b) => {
-                            const scoreA = a.pricing + (a.pricing * (a.clicked || 0) * 0.42);
-                            const scoreB = b.pricing + (b.pricing * (b.clicked || 0) * 0.42);
-                            return scoreB - scoreA;
-                        });
-                    } else if (sortBy === 'hotness') {
-                        return updated.sort((a, b) => (b.clicked || 0) - (a.clicked || 0));
-                    } else {
-                        return updated.sort((a, b) => b.pricing - a.pricing);
-                    }
-                });
+                // 重新从后端获取最新数据
+                await loadAds();
             } else if (modalMode === 'edit') {
-                newAd = await adAPI.updateAd(currentAd.id, formData);
+                await adAPI.updateAd(currentAd.id, formData);
                 showMessage('广告更新成功');
                 setIsModalOpen(false);
-                // 直接更新列表中的广告
-                setAds(prevAds => prevAds.map(ad => ad.id === currentAd.id ? newAd : ad));
+                // 重新从后端获取最新数据
+                await loadAds();
+                
+                // 如果当前有视频弹窗打开且是同一个广告，关闭弹窗（让用户重新点击播放新视频）
+                if (isVideoModalOpen && videoAd && videoAd.id === currentAd.id) {
+                    setIsVideoModalOpen(false);
+                    setVideoAd(null);
+                }
             }
         } catch (error) {
             console.error('提交失败:', error);
             showMessage(error.message || '操作失败', 'error');
         }
-    }, [modalMode, sortBy, currentAd]);
+    }, [modalMode, currentAd, isVideoModalOpen, videoAd, loadAds]);
 
     // 确认删除（优化：直接更新列表，不重新请求）
     const handleConfirmDelete = async () => {
@@ -264,6 +289,15 @@ function App() {
                 isOpen={isDeleteModalOpen}
                 onConfirm={handleConfirmDelete}
                 onCancel={handleCancelDelete}
+            />
+
+            <VideoModal
+                key={`${videoAd?.id}-${JSON.stringify(videoAd?.videos || [])}`} // 添加key，确保视频变化时重新渲染
+                isOpen={isVideoModalOpen}
+                videos={videoAd?.videos || []}
+                landingPage={videoAd?.landingPage}
+                onClose={() => setIsVideoModalOpen(false)}
+                onVideoEnd={() => handleVideoEnd(videoAd)}
             />
         </>
     );

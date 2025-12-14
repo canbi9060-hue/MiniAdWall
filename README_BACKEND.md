@@ -63,7 +63,55 @@ npm run dev:all
 http://localhost:3001/api/ads
 ```
 
-### 1. 获取广告列表
+### 1. 获取表单配置
+
+**GET** `/api/form-config`
+
+**说明**: 返回广告表单的动态配置，用于前端动态渲染表单项。
+
+**响应示例**:
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "field": "title",
+      "name": "广告标题",
+      "component": "Input",
+      "type": "text",
+      "required": true,
+      "placeholder": "请输入广告标题",
+      "validator": {
+        "maxLength": 50,
+        "minLength": 1
+      }
+    },
+    {
+      "field": "publisher",
+      "name": "发布人",
+      "component": "Input",
+      "type": "text",
+      "required": true,
+      "validator": {
+        "maxLength": 50
+      }
+    },
+    {
+      "field": "videos",
+      "name": "上传视频",
+      "component": "VideoUpload",
+      "type": "video",
+      "required": true,
+      "multiple": true,
+      "validator": {
+        "url": true
+      }
+    }
+  ]
+}
+```
+
+### 2. 获取广告列表
 
 **GET** `/api/ads?sortBy=ranking`
 
@@ -89,7 +137,7 @@ http://localhost:3001/api/ads
 }
 ```
 
-### 2. 创建广告
+### 3. 创建广告
 
 **POST** `/api/ads`
 
@@ -100,7 +148,8 @@ http://localhost:3001/api/ads
   "publisher": "发布人",
   "content": "内容文案",
   "landingPage": "https://example.com",
-  "pricing": 10.00
+  "pricing": 10.00,
+  "videos": ["https://example.com/video.mp4"]
 }
 ```
 
@@ -113,7 +162,7 @@ http://localhost:3001/api/ads
 }
 ```
 
-### 3. 更新广告
+### 4. 更新广告
 
 **PUT** `/api/ads/:id`
 
@@ -128,7 +177,7 @@ http://localhost:3001/api/ads
 }
 ```
 
-### 4. 删除广告
+### 5. 删除广告
 
 **DELETE** `/api/ads/:id`
 
@@ -140,7 +189,7 @@ http://localhost:3001/api/ads
 }
 ```
 
-### 5. 点击广告（点击数+1）
+### 6. 点击广告（点击数+1）
 
 **POST** `/api/ads/:id/click`
 
@@ -165,8 +214,10 @@ http://localhost:3001/api/ads
 ## 数据存储
 
 - 数据存储在 `server/data/ads.json` 文件中
+- 上传的视频文件存储在 `server/uploads/` 目录
 - 首次启动会自动创建默认数据
 - 数据文件会自动创建，无需手动创建
+- 上传的视频可通过 `/uploads/文件名` 访问
 
 ## 开发说明
 

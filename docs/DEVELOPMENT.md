@@ -7,7 +7,8 @@
 - **Vite** - 构建工具，提供快速的开发体验
 
 ### 数据存储
-- **localStorage** - 浏览器本地存储，用于数据持久化
+- **后端 API** - 通过 RESTful API 与后端通信
+- **JSON 文件存储** - 后端使用 JSON 文件持久化数据
 
 ### 工具库
 - **form-serialize** - 表单序列化工具，用于获取表单数据
@@ -18,13 +19,16 @@
 ```
 src/
 ├── components/          # React组件
-│   ├── Header.jsx      # 头部组件
+│   ├── Navbar.jsx      # 导航栏组件
 │   ├── AdCard.jsx      # 广告卡片组件
 │   ├── AdList.jsx      # 广告列表组件
 │   ├── AdModal.jsx     # 广告弹窗组件
+│   ├── DynamicForm.jsx # 动态表单组件
+│   ├── VideoModal.jsx  # 视频播放弹窗组件
 │   └── DeleteModal.jsx # 删除确认弹窗
 ├── utils/              # 工具模块
-│   ├── adManager.js    # 广告数据管理
+│   ├── api.js          # API 服务层
+│   ├── upload.js       # 文件上传工具
 │   ├── helpers.js      # 辅助函数
 │   └── formSerialize.js # 表单序列化
 ├── App.jsx             # 主应用组件
@@ -42,9 +46,10 @@ App (主组件)
 ```
 
 ### 数据流
-1. **数据管理**: `AdManager` 模块统一管理广告数据
-2. **状态管理**: 使用 React Hooks (`useState`, `useEffect`, `useCallback`)
-3. **数据持久化**: 通过 localStorage 存储，页面刷新后数据不丢失
+1. **数据管理**: 通过 `adAPI` 与后端 API 通信
+2. **状态管理**: 使用 React Hooks (`useState`, `useEffect`, `useCallback`, `useMemo`)
+3. **数据持久化**: 后端使用 JSON 文件存储，前端通过 API 获取和更新数据
+4. **动态表单**: 从后端获取表单配置，动态渲染表单项
 
 ## 核心功能实现
 
