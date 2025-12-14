@@ -15,10 +15,18 @@ const PORT = process.env.PORT || 3001;
 // 中间件
 // CORS 配置：允许所有来源（生产环境建议配置具体域名）
 app.use(cors({
-  origin: '*', // 允许所有来源，生产环境可以配置为 ['https://www.miniad.top', 'https://miniad.top']
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  origin: function (origin, callback) {
+    // 允许所有来源（包括无 origin 的请求，如 Postman）
+    callback(null, true);
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Type', 'Authorization']
 }));
+
+// 处理预检请求
+app.options('*', cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -35,9 +43,14 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok', message: 'Mini广告墙后端服务运行正常' });
 });
 
-// 启动服务器
-app.listen(PORT, () => {
-  console.log(`🚀 服务器运行在 http://localhost:${PORT}`);
-  console.log(`📡 API 地址: http://localhost:${PORT}/api/ads`);
-});
+// 启动服务器（仅本地开发时）
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`🚀 服务器运行在 http://localhost:${PORT}`);
+    console.log(`📡 API 地址: http://localhost:${PORT}/api/ads`);
+  });
+}
+
+// 导出给 Vercel serverless 函数使用
+export default app;
 
