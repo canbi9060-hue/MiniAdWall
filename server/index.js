@@ -31,7 +31,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // 静态文件服务 - 提供上传的视频文件访问
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+// Vercel 无法写入代码目录，使用 /tmp/uploads
+app.use('/uploads', express.static(path.join('/tmp', 'uploads')));
 
 // 路由
 app.use('/api/ads', adRouter);

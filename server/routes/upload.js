@@ -10,7 +10,8 @@ const __dirname = path.dirname(__filename);
 const router = express.Router();
 
 // 确保上传目录存在
-const uploadsDir = path.join(__dirname, '../uploads');
+// Vercel serverless 环境只读，使用 /tmp 作为可写目录
+const uploadsDir = path.join('/tmp', 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
