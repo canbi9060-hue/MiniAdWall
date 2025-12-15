@@ -12,21 +12,19 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// 中间件
-// CORS 配置：允许所有来源（生产环境建议配置具体域名）
-app.use(cors({
-  origin: function (origin, callback) {
-    // 允许所有来源（包括无 origin 的请求，如 Postman）
-    callback(null, true);
-  },
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['Content-Type', 'Authorization']
-}));
+// 全局 CORS 处理：直接返回允许所有域（生产建议收紧）
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS,PATCH');
+  res.header('Access-Control-Allow-Headers', 'Content-Type,Authorization,X-Requested-With');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
+});
 
-// 处理预检请求
-app.options('*', cors());
+// 同时保留 cors 中间件，确保兼容
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
