@@ -4,11 +4,18 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DATA_FILE = path.join(__dirname, '../data/ads.json');
+
+// 在 Vercel 上，代码目录是只读的，不能写入 ../data
+// 因此在 Vercel 环境下改用 /tmp/data 目录，在本地仍使用原来的 ../data
+const isVercel = process.env.VERCEL === '1';
+const DATA_DIR = isVercel
+  ? path.join('/tmp', 'data')
+  : path.join(__dirname, '../data');
+const DATA_FILE = path.join(DATA_DIR, 'ads.json');
 
 // 确保数据目录存在
 const ensureDataDir = async () => {
-  const dataDir = path.dirname(DATA_FILE);
+  const dataDir = DATA_DIR;
   try {
     await fs.access(dataDir);
   } catch {
