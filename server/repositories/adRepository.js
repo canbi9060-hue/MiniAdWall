@@ -54,16 +54,28 @@ export class AdRepository {
     }
   }
 
-  // 读取随代码发布的种子广告数据
+  // 读取随代码发布的种子广告数据（尝试多种可能路径，防止打包路径不一致）
   async readSeedAds() {
-    try {
-      const seedData = await fs.readFile(SEED_FILE, 'utf-8');
-      const seedAds = JSON.parse(seedData);
-      return Array.isArray(seedAds) ? seedAds : [];
-    } catch {
-      // 种子文件异常时，返回空数组以避免函数崩溃
-      return [];
+    const candidates = [
+      SEED_FILE,
+      path.join(process.cwd(), 'data', 'ads.json'),
+      path.join(process.cwd(), '../data', 'ads.json')
+    ];
+
+    for (const p of candidates) {
+      try {
+        const seedData = await fs.readFile(p, 'utf-8');
+        const seedAds = JSON.parse(seedData);
+        if (Array.isArray(seedAds) && seedAds.length > 0) {
+          return seedAds;
+        }
+      } catch {
+        // ignore and try next
+      }
     }
+
+    // 种子文件异常时，返回空数组以避免函数崩溃
+    return [];
   }
 
   // 保存所有广告
