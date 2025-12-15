@@ -39,8 +39,8 @@ app.use('/api/ads', adRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/form-config', formConfigRouter);
 
-// 健康检查
-app.get('/health', (req, res) => {
+// 健康检查（同时支持 /health 和 /api/health，便于 Vercel 路由）
+app.get(['/health', '/api/health'], (req, res) => {
   res.json({ status: 'ok', message: 'Mini广告墙后端服务运行正常' });
 });
 
