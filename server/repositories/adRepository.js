@@ -1,7 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import seedAds from '../data/ads.json' assert { type: 'json' };
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -14,8 +13,8 @@ const DATA_DIR = isVercel
   : path.join(__dirname, '../data');
 const DATA_FILE = path.join(DATA_DIR, 'ads.json');
 
-// 代码仓库中的默认广告数据（来自 data/ads.json）
-const DEFAULT_ADS = Array.isArray(seedAds) ? seedAds : [];
+// 仓库中的种子数据文件（只读）
+const SEED_FILE = path.join(__dirname, '../data/ads.json');
 
 // 确保数据目录存在
 const ensureDataDir = async () => {
@@ -35,19 +34,20 @@ export class AdRepository {
     try {
       const data = await fs.readFile(DATA_FILE, 'utf-8');
       const ads = JSON.parse(data);
-
-      // 如果数据文件格式不对或为空数组，则使用代码中的默认广告重新初始化
-      if (!Array.isArray(ads) || ads.length === 0) {
-        await this.saveAllAds(DEFAULT_ADS);
-        return DEFAULT_ADS;
-      }
-
-      return ads;
+      return Array.isArray(ads) ? ads : [];
     } catch (error) {
       if (error.code === 'ENOENT') {
-        // 主数据文件不存在：用默认广告初始化一次
-        await this.saveAllAds(DEFAULT_ADS);
-        return DEFAULT_ADS;
+        // 主数据文件不存在：从种子文件初始化一次
+        try {
+          const seedData = await fs.readFile(SEED_FILE, 'utf-8');
+          const seedAds = JSON.parse(seedData);
+          const ads = Array.isArray(seedAds) ? seedAds : [];
+          await this.saveAllAds(ads);
+          return ads;
+        } catch (seedError) {
+          console.error('初始化默认广告数据失败:', seedError);
+          return [];
+        }
       }
       throw error;
     }
