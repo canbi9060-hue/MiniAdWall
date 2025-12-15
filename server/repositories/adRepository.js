@@ -35,7 +35,21 @@ export class AdRepository {
     try {
       const data = await fs.readFile(DATA_FILE, 'utf-8');
       const ads = JSON.parse(data);
-      return Array.isArray(ads) ? ads : [];
+
+      // 如果数据文件格式不对或为空数组，则再次从种子文件初始化
+      if (!Array.isArray(ads) || ads.length === 0) {
+        try {
+          const seedData = await fs.readFile(SEED_FILE, 'utf-8');
+          const seedAds = JSON.parse(seedData);
+          const validAds = Array.isArray(seedAds) ? seedAds : [];
+          await this.saveAllAds(validAds);
+          return validAds;
+        } catch {
+          return [];
+        }
+      }
+
+      return ads;
     } catch (error) {
       if (error.code === 'ENOENT') {
         // 主数据文件不存在：从只读的种子文件初始化一次
