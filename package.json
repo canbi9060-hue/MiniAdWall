@@ -2,15 +2,15 @@
   "name": "mini-ad-wall",
   "version": "1.0.0",
   "description": "Mini广告墙 - React版本",
-  "main": "index.js",
+  "main": "src/index.jsx",
   "scripts": {
-    "dev": "vite",
+    "start": "vite",
     "build": "vite build",
-    "preview": "vite preview",
+    "test": "echo \"No test specified\" && exit 0",
+    "eject": "echo \"This project doesn't support eject\" && exit 0",
     "server": "cd server && npm start",
     "server:dev": "cd server && npm run dev",
-    "start": "npm run server",
-    "dev:all": "concurrently \"npm run server:dev\" \"npm run dev\""
+    "dev:all": "concurrently \"npm run server:dev\" \"npm run start\""
   },
   "dependencies": {
     "react": "^18.2.0",

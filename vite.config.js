@@ -23,8 +23,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, 'src'),
-      '@image': resolve(__dirname, 'image')
+      '@': resolve(__dirname, 'src')
     }
   }
 })

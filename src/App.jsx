@@ -6,7 +6,6 @@ import AdList from './components/AdList';
 import AdModal from './components/AdModal';
 import DeleteModal from './components/DeleteModal';
 import VideoModal from './components/VideoModal';
-import './App.css';
 
 function App() {
     const [ads, setAds] = useState([]);
