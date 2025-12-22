@@ -39,6 +39,13 @@
 2. 配置环境变量（如果需要）
 3. 完成部署
 4. 获取后端 API 地址
+
+   后端部署后，会获得一个 URL，如 `https://server-zeta-lilac.vercel.app`。
+   正确的 API 基础地址应该是：`https://server-zeta-lilac.vercel.app/api`
+   
+   **注意：环境变量配置问题**
+   请确保在 Vercel 前端项目设置中，环境变量 `VITE_API_BASE_URL` 配置为完整的 URL 格式，
+   包含协议头 `https://`，例如：`https://server-zeta-lilac.vercel.app/api`
 5. 配置前端连接后端
 
 ## 前端部署提示
