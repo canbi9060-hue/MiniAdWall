@@ -10,8 +10,8 @@ const getApiBaseUrl = () => {
   if (import.meta.env.MODE === 'production' || window.location.hostname !== 'localhost') {
     // 默认使用后端服务地址（需要在 Vercel 环境变量中配置 VITE_API_BASE_URL）
     // 如果未配置，尝试使用最新的后端服务地址
-    // 建议在 Vercel 项目设置中配置环境变量：VITE_API_BASE_URL=https://server-7uzottyd2-bc-82a48503.vercel.app/api
-    return 'https://server-7uzottyd2-bc-82a48503.vercel.app/api';
+    // 建议在 Vercel 项目设置中配置环境变量：VITE_API_BASE_URL=https://server-seven-flame.vercel.app/api
+    return 'https://server-seven-flame.vercel.app/api';
   }
   
   // 开发环境
